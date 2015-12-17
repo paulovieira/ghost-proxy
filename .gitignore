@@ -15,3 +15,4 @@ coverage.*
 
 # configuration files (contain sensitive data - passwords, api keys, etc)
 config/production.js
+.tern-port
