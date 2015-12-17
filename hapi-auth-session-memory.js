@@ -63,10 +63,10 @@ internals.routeConfig.login = {
         if (!user || !password) {
             authFailed = "missing";
         }
-        else if(user !== internals.user.toLowerCase()){
+        else if(user.toLowerCase() !== internals.user.toLowerCase()){
             authFailed = "unknown-user";
         }
-        else if(password !== internals.password.toLowerCase()){
+        else if(password.toLowerCase() !== internals.password.toLowerCase()){
             authFailed = "wrong-password";
         }
 
