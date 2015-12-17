@@ -50,7 +50,7 @@ internals.routeConfig.login = {
             return reply.redirect("/");
         }
 
-        // TODO: we should have a configurable function to check the user
+        // TODO: the logic to check the password should be extracted
 
         var authFailed;
         var user = request.payload.user, password = request.payload.password;
@@ -66,7 +66,7 @@ internals.routeConfig.login = {
         else if(user !== internals.user){
             authFailed = "unknown-user";
         }
-        else if(password !== internals.password){
+        else if(password !== internals.password.toLowerCase()){
             authFailed = "wrong-password";
         }
 
