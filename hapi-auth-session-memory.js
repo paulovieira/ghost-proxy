@@ -181,7 +181,8 @@ exports.register = function(server, options, next){
     });
 
     server.route({
-        path: "/logout",
+        //path: "/logout",
+        path: "/exit",
         method: "GET",
         config: internals.routeConfig.logout
     });
