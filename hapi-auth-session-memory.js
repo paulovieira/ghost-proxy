@@ -123,19 +123,19 @@ internals.routeConfig.login = {
 internals.routeConfig.logout = {
 
     handler: function(request, reply) {
-console.log(JSON.stringify(request.auth.artifacts))
+
         if(!request.auth.isAuthenticated){
             return reply.redirect("/login");
         }
 
         var uuid;
         if(request.auth.artifacts){
-console.log("x")
+
             uuid = request.auth.artifacts[internals.cookieName];
         }
-console.log("y, ", uuid);
+
         request.server.app.sessionCache.drop(uuid, function(err){
-console.log("err, ", err);
+
             if(err){
                 return reply(err);
             }
