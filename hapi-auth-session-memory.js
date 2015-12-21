@@ -1,39 +1,27 @@
+var Hoek = require("hoek");
 var UUID = require("node-uuid");
 var Config = require("config");
 
 var internals = {};
 
-internals["3 hours"]    = 3 * 60 * 60 * 1000;
-internals["30 seconds"] =          30 * 1000;
-internals["20 seconds"] =          20 * 1000;
-internals["10 seconds"] =          10 * 1000;
-
-internals.ttl = internals["3 hours"];
-
 exports.register = function(server, options, next){
 
     // TODO: validate the options with Joi
     // TODO: verify if there are any other options to the strategy
+debugger;
 
     // create the memory cache
     server.app.sessionCache = server.cache({
-        segment: "sessionSegment"
+        segment: options.cacheSegment || "sessionSegment",
+
+        // the max alowed value in catbox-memory
+        expiresIn: options.ttl || Math.pow(2, 31) - 1
     });
 
     // registers an authentication strategy named "session" using the "cookie" scheme
     // (the scheme should have been previously registered in the hapi-auth-cookie plugin)
-    options.cookieName = options.cookieName || "sid";
-    server.auth.strategy("session-memory", "cookie", false, {
+    var strategyOptions = {
         password: options.ironPassword,
-        cookie: options.cookieName,
-        ttl: options.ttl || internals.ttl,
-        isSecure: options.isSecure || false,
-        clearInvalid: options.clearInvalid || true, // if the session is expired, will delete the cookie in the browser (but if the cookie has expired, it will remain)
-
-        redirectTo: options.redirectTo || options.loginPath,  // if authentication fails, redirect; if not set, will simply return a forbidden message
-        appendNext: options.appendNext || true,
-        redirectOnTry: options.redirectOnTry || true,
-
         validateFunc: function(request, session, callback) {
             debugger;
 
@@ -41,13 +29,13 @@ exports.register = function(server, options, next){
             request.server.app.sessionCache.get(session[options.cookieName], function(err, value, cached, report) {
                 debugger;
 
+                // could not get the session data from catbox (internal error)
                 if (err) {
-                    // could not get session data from catbox
                     return callback(err);
                 }
 
+                // session data in catbox is invalid or does not exist
                 if (!cached) {
-                    // session data in catbox is invalid
                     return callback(null, false);
                 }
 
@@ -55,9 +43,24 @@ exports.register = function(server, options, next){
             });
 
             console.log(request.server.app.sessionCache.stats);
+        }
+    };
+    
+    Hoek.merge(strategyOptions, {
+        cookie: options.cookieName || "sid",
+        ttl: options.ttl,
+        isSecure: options.isSecure,
 
-        },
-    });
+        // if the session is expired, will delete the cookie in the browser (but if the cookie has expired, it will remain) - ???
+        clearInvalid: options.clearInvalid, 
+        redirectTo: options.redirectTo || options.loginPath,
+        appendNext: options.appendNext,
+        redirectOnTry: options.redirectOnTry,
+
+    }, false);
+
+    var mode = false;
+    server.auth.strategy("session-memory", "cookie", mode, strategyOptions);
 
     // login route
     server.route({
@@ -100,12 +103,14 @@ exports.register = function(server, options, next){
                         newSession,
 
                         // same value as the ttl in the cookie
-                        internals.ttl, 
+                        strategyOptions.ttl || 0,
+                        //10000,
 
                         function(err) {
                             debugger;
 
                             if (err) {
+                                console.log(err.message);
                                 return reply(err);
                             }
 
@@ -120,68 +125,6 @@ exports.register = function(server, options, next){
 
                 });
 
-
-
-
-/*
-                var authFailed;
-                var user = request.payload.user, password = request.payload.password;
-
-                //    Possible reasons for a failed authentication
-                //     - "missing username or password" (won't even connect to the DB)
-                //     - "username does not exist" 
-                //     - "wrong password" (username exists but password doesn't match)
-                
-                if (!user || !password) {
-                    authFailed = "missing";
-                }
-                else if(user.toLowerCase() !== internals.user.toLowerCase()){
-                    authFailed = "unknown-user";
-                }
-                else if(password.toLowerCase() !== internals.password.toLowerCase()){
-                    authFailed = "wrong-password";
-                }
-
-                if(authFailed){
-                    return reply.redirect(options.loginPath + "?auth-fail-reason=" + authFailed);
-                }
-                
-                // if we arrive here, the username and password match
-
-                // we now set the session in the internal cache (Catbox with memory adapter)
-                var newSession = {
-                    uuid: UUID.v4(),
-                    user: user
-                };
-
-                // store an item in the cache
-                request.server.app.sessionCache.set(
-
-                    // the unique item identifier 
-                    newSession.uuid,
-
-                    //  value to be stored
-                    newSession,
-
-                    // same value as the ttl in the cookie
-                    internals.ttl, 
-
-                    function(err) {
-                        debugger;
-
-                        if (err) {
-                            return reply(err);
-                        }
-
-                        var cookieCrumb = {};
-                        cookieCrumb[options.cookieName] = newSession.uuid;
-
-                        request.auth.session.set(cookieCrumb);
-                        
-                        return reply.redirect(options.successRedirectTo);
-                    }
-                );
-*/
             },
 
             auth: {

@@ -8,6 +8,12 @@ var internals = {};
 internals.validUser = Config.get("user");
 internals.validPassword = Config.get("password");
 
+internals["3 hours"]    = 3 * 60 * 60 * 1000;
+internals["20 seconds"] =          20 * 1000;
+internals["10 seconds"] =          10 * 1000;
+internals["5 seconds"]  =           5 * 1000;
+
+
 internals.configureNunjucks = function(server){
 
     server.views({
@@ -155,9 +161,11 @@ debugger;
 
                 // strategy options
                 ironPassword: Config.get("ironPassword"),
-
-
-
+                isSecure: false,
+                clearInvalid: true,
+                appendNext: true,
+                redirectOnTry: true,
+                //ttl: internals["3 hours"],
             }
         },
 
