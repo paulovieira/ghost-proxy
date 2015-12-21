@@ -31,31 +31,31 @@ internals.config.ghostProxyStatic = {
     
 };
 
-internals.config.ghostAssets = {
-    handler: {
-        directory: { 
-            path: __dirname + "/assets",
-            index: false,
-            listing: false,
-            showHidden: false
-        }
-    },
-    cache: {
-        privacy: "public",
-        expiresIn: 3600000
-    },
-    cors: {
-        methods: ["GET"]
-    },
+// internals.config.ghostAssets = {
+//     handler: {
+//         directory: { 
+//             path: __dirname + "/assets",
+//             index: false,
+//             listing: false,
+//             showHidden: false
+//         }
+//     },
+//     cache: {
+//         privacy: "public",
+//         expiresIn: 3600000
+//     },
+//     cors: {
+//         methods: ["GET"]
+//     },
 
-    auth: false,
+//     auth: false,
 
-    // if there is no auth, there's no need to parse cookies
-    state: {
-        parse: false
-    },
+//     // if there is no auth, there's no need to parse cookies
+//     state: {
+//         parse: false
+//     },
     
-};
+// };
 
 exports.register = function(server, options, next){
 

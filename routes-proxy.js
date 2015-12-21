@@ -3,21 +3,21 @@ var Config = require("config");
 var internals = {};
 internals.baseUri = "http://" + Config.get("ghost.host") + ":" + Config.get("ghost.port");
 
-internals.abortIfNotAuthenticated = function(request, reply){
-debugger;
-    //request.auth.isAuthenticated = true;
-    if(!request.auth.isAuthenticated) {
-        return reply()
-                .redirect("/login")
-                .takeover();
-    }
+// internals.abortIfNotAuthenticated = function(request, reply){
+// debugger;
+//     //request.auth.isAuthenticated = true;
+//     if(!request.auth.isAuthenticated) {
+//         return reply()
+//                 .redirect("/login")
+//                 .takeover();
+//     }
 
-    return reply();
-};
+//     return reply();
+// };
 
 internals.config = {};
 
-internals.config.proxy = {
+internals.config.proxyGeneral = {
 
     handler: {
         proxy: {
@@ -40,9 +40,24 @@ internals.config.proxy = {
         strategy: "session-memory",
         mode: "try"
     },
+};
 
-    pre: [internals.abortIfNotAuthenticated]
+internals.config.proxyAssets = {
 
+    handler: {
+        proxy: {
+            mapUri: function(request, cb){
+
+                return cb(null, internals.baseUri + request.raw.req.url);
+            },
+
+            redirects: 10, 
+            passThrough: true,
+            //ttl: "upstream"
+        }                
+    },
+
+    auth: false
 };
 
 exports.register = function(server, options, next){
@@ -50,7 +65,13 @@ exports.register = function(server, options, next){
     server.route({
         method: "*",
         path:"/{any*}", 
-        config: internals.config.proxy
+        config: internals.config.proxyGeneral
+    });
+
+    server.route({
+        method: "GET",
+        path:"/assets/{any*}", 
+        config: internals.config.proxyAssets
     });
 
     return next();

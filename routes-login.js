@@ -26,6 +26,15 @@ internals.routeConfig.login = {
         mode: "try"
     },
 
+    plugins: {
+
+        // disable the redirectTo option for this route (given to the hapi auth cookie), otherwise
+        // we get and infinite redirect loop
+        "hapi-auth-cookie": {
+            redirectTo: false
+        }
+    }
+
 };
 
 

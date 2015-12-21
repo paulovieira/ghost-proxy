@@ -1,10 +1,12 @@
 var Glue = require("glue");
 var Hoek = require("hoek");
 var Config = require("config");
+var Boom = require("boom");
 var Nunjucks = require("nunjucks");
 
 var internals = {};
-
+internals.validUser = Config.get("user");
+internals.validPassword = Config.get("password");
 
 internals.configureNunjucks = function(server){
 
@@ -116,6 +118,45 @@ var manifest = {
         // dependencies: ["hapi-auth-cookie"]
         {
             "./hapi-auth-session-memory": {
+                loginPath: "/login",
+                logoutPath: "/exit",
+                successRedirectTo: "/",
+                validateLoginData: function(request, next){
+debugger;
+                    var authFailed;
+                    var user = request.payload.user, password = request.payload.password;
+
+                    //    Possible reasons for a failed authentication
+                    //     - "missing username or password" (won't even connect to the DB)
+                    //     - "username does not exist" 
+                    //     - "wrong password" (username exists but password doesn't match)
+                    
+                    if (!user || !password) {
+                        authFailed = "missing";
+                    }
+                    else if(user.toLowerCase() !== internals.validUser.toLowerCase()){
+                        authFailed = "unknown-user";
+                    }
+                    else if(password.toLowerCase() !== internals.validPassword.toLowerCase()){
+                        authFailed = "wrong-password";
+                    }
+
+                    if(authFailed){
+                        return next(Boom.unauthorized("/login?auth-fail-reason=" + authFailed));
+                    }
+
+                    // if we arrive here, the username and password match
+                    var loginData = {
+                        user: user
+                    };
+
+                    return next(undefined, loginData);
+                },
+
+                // strategy options
+                ironPassword: Config.get("ironPassword"),
+
+
 
             }
         },
