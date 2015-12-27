@@ -159,7 +159,8 @@ debugger;
                     return next(undefined, loginData);
                 },
 
-                // strategy options
+                // strategy options - see hapi-auth-cookie and the options to server.auth.strategy
+                // in the main docs; if some option is not given, the defaults will be used
                 ironPassword: Config.get("ironPassword"),
                 isSecure: false,
                 clearInvalid: true,
