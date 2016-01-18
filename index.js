@@ -123,7 +123,7 @@ var manifest = {
 
         // dependencies: ["hapi-auth-cookie"]
         {
-            "./hapi-auth-session-memory": {
+            "hapi-auth-session-memory": {
                 loginPath: "/login",
                 logoutPath: "/exit",
                 successRedirectTo: "/",

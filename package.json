@@ -6,6 +6,7 @@
     "glue": "2.2.x",
     "h2o2": "^4.0.2",
     "hapi-auth-cookie": "^3.1.0",
+    "hapi-auth-session-memory": "paulovieira/hapi-auth-session-memory",
     "hoek": "2.x.x",
     "inert": "^3.2.0",
     "node-uuid": "^1.4.7",
