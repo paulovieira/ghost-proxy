@@ -1,16 +1,14 @@
 module.exports = {
-
-    ironPassword: "",
-    user: "",
-    password: "",
-
+    username: '',
+    password: '',
     ghost: {
-        host: "localhost",
+        host: 'localhost',
         port: 2368
     },
 
     proxy: {
-        host: "localhost",
-        port: 2369
+        host: 'localhost',
+        port: 8000
     }
 };
+

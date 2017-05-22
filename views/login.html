@@ -23,20 +23,24 @@
             <div class="col-sm-4 col-sm-offset-4">
                 <h4 class="text-center"><b>Acesso reservado</b></h4>
 
-                {% if ctx.query["auth-fail-reason"] == "missing" %}
-                <div style="margin-top: 20px;" class="alert alert-danger alert-dismissible" role="alert">Nome de utilizador ou password em falta</div>
+
+                {% if ctx.query["auth-fail-reason"] == "1" %}
+                <div style="margin-top: 20px; font-weight: normal;" class="alert alert-danger alert-dismissible" role="alert">Nome de utilizador ou password em falta</div>
                 {% endif %}
-                {% if ctx.query["auth-fail-reason"] == "unknown-user" %}
-                <div style="margin-top: 20px;" class="alert alert-danger alert-dismissible" role="alert">Nome de utilizador desconhecido</div>
+                {% if ctx.query["auth-fail-reason"] == "2" %}
+                <div style="margin-top: 20px; font-weight: normal;" class="alert alert-danger alert-dismissible" role="alert">Nome de utilizador desconhecido</div>
                 {% endif %}
-                {% if ctx.query["auth-fail-reason"] == "wrong-password" %}
-                <div style="margin-top: 20px;" class="alert alert-danger alert-dismissible" role="alert">Password errada</div>
+                {% if ctx.query["auth-fail-reason"] == "3" %}
+                <div style="margin-top: 20px; font-weight: normal;" class="alert alert-danger alert-dismissible" role="alert">Password errada</div>
+                {% endif %}
+                {% if ctx.query["auth-fail-reason"] == "4" %}
+                <div style="margin-top: 20px; font-weight: normal;" class="alert alert-danger alert-dismissible" role="alert">O tempo da sua sessão expirou. Por favor faça login novamente.</div>
                 {% endif %}
 
-                <form style="margin-top: 30px;" method="post" action="/login">
+                <form style="margin-top: 30px;" method="post" action="/login-data">
                     <div class="form-group">
-                        <label for="user" style="font-size: 14px;">Utilizador</label>
-                        <input type="text" class="form-control" id="user" name="user">
+                        <label for="username" style="font-size: 14px;">Utilizador</label>
+                        <input type="text" class="form-control" id="username" name="username">
                     </div>
                     <div class="form-group">
                         <label for="password" style="font-size: 14px;">Password</label>
@@ -49,8 +53,8 @@
             </div>
         </div>
     </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="/static/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    {# <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script> #}
+    {# <script src="/static/bootstrap/3.3.5/js/bootstrap.min.js"></script> #}
 </body>
 
 </html>
